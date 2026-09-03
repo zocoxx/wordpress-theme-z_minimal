@@ -281,6 +281,13 @@ function z_minimal_render_seo_meta() {
         } else {
             $description = get_bloginfo( 'description' );
         }
+    } elseif ( is_category() || is_tag() || is_tax() ) {
+        $term = get_queried_object();
+        if ( $term && ! empty( $term->description ) ) {
+            $description = wp_strip_all_tags( $term->description );
+        } else {
+            $description = sprintf( __( '%s 下的博客文章列表与按年归档。', 'z_minimal' ), single_term_title( '', false ) );
+        }
     }
 
     if ( ! empty( $description ) ) {
@@ -292,6 +299,14 @@ function z_minimal_render_seo_meta() {
         echo '<link rel="canonical" href="' . esc_url( get_permalink() ) . '">' . "\n";
     } elseif ( is_home() || is_front_page() ) {
         echo '<link rel="canonical" href="' . esc_url( home_url( '/' ) ) . '">' . "\n";
+    } elseif ( is_category() || is_tag() || is_tax() ) {
+        $term = get_queried_object();
+        if ( $term ) {
+            $term_link = get_term_link( $term );
+            if ( ! is_wp_error( $term_link ) ) {
+                echo '<link rel="canonical" href="' . esc_url( $term_link ) . '">' . "\n";
+            }
+        }
     }
 }
 add_action( 'wp_head', 'z_minimal_render_seo_meta', 1 );
@@ -371,6 +386,27 @@ function z_minimal_smart_slug_fallback() {
 
         // 排除静态文件
         if ( ! empty( $path ) && ! preg_match( '/\.(jpg|jpeg|png|gif|css|js|ico|svg|txt|xml|woff|woff2)$/i', $path ) ) {
+            // 优先检查是否为分类请求，如 /category/xxx
+            if ( preg_match( '#^category/([^/]+)#i', $path, $cat_match ) ) {
+                $cat_slug = urldecode( $cat_match[1] );
+                $cat_obj = get_category_by_slug( $cat_slug );
+                if ( ! $cat_obj ) {
+                    $cat_obj = get_term_by( 'name', $cat_slug, 'category' );
+                }
+                if ( $cat_obj ) {
+                    global $wp_query;
+                    $wp_query->is_home           = false;
+                    $wp_query->is_front_page     = false;
+                    $wp_query->is_category       = true;
+                    $wp_query->is_archive        = true;
+                    $wp_query->is_404            = false;
+                    $wp_query->queried_object    = $cat_obj;
+                    $wp_query->queried_object_id = $cat_obj->term_id;
+                    include get_template_directory() . '/index.php';
+                    exit;
+                }
+            }
+
             $page = get_page_by_path( $path );
             if ( ! $page ) {
                 $page = get_page_by_title( $path );
