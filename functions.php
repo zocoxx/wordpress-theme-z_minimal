@@ -475,3 +475,38 @@ function z_minimal_external_links_blank( $content ) {
 }
 add_filter( 'the_content', 'z_minimal_external_links_blank', 20 );
 
+/**
+ * 11. 全局启用并强化原生图片懒加载 (Native Lazy Loading & Async Decoding)
+ * 自动为正文所有图片注入 loading="lazy" 与 decoding="async"，零外部依赖
+ */
+add_filter( 'wp_lazy_loading_enabled', '__return_true' );
+
+function z_minimal_lazy_load_images( $content ) {
+    if ( empty( $content ) ) {
+        return $content;
+    }
+
+    // 匹配所有 <img> 标签
+    return preg_replace_callback(
+        '/<img\s+([^>]*?)>/i',
+        function( $matches ) {
+            $tag = $matches[0];
+
+            // 自动补全原生懒加载属性 loading="lazy"
+            if ( stripos( $tag, 'loading=' ) === false ) {
+                $tag = str_replace( '<img ', '<img loading="lazy" ', $tag );
+            }
+
+            // 自动补全异步解码属性 decoding="async"，避免大图解码阻塞主线程渲染
+            if ( stripos( $tag, 'decoding=' ) === false ) {
+                $tag = str_replace( '<img ', '<img decoding="async" ', $tag );
+            }
+
+            return $tag;
+        },
+        $content
+    );
+}
+add_filter( 'the_content', 'z_minimal_lazy_load_images', 21 );
+
+

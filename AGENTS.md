@@ -74,6 +74,7 @@ wp-content/themes/z_minimal/
 - **站外链接自动新窗口打开**：服务端 `the_content` 过滤器自动检测站外链接，追加 `target="_blank"` 与 `rel="noopener noreferrer"`；客户端同步进行轻量兜底。
 - **图文间距与说明文字**：消除段落与 `<figure>` 的多重外边距堆叠；说明文字（`figcaption`、`.wp-element-caption`）绝对居中，字号弱化为 `0.85rem`，形成清晰层级。
 - **数据表格与多媒体**：自适应移动端横向滚动，边框跟随主题变量；嵌入视频自适应容器。
+- **高性能原生图片懒加载（Native Lazy Loading & Async Decoding）**：服务端在 `the_content` 输出时自动补全 `loading="lazy"` 与 `decoding="async"`，配合 CSS 微占位底色与平滑渐显过渡，零外部 JS 依赖，显著降低首屏资源消耗并避免解码卡顿。
 
 ### 3.5 全局彻底关闭评论
 - 过滤器屏蔽 `comments_open`、`pings_open`、`comments_array`。

@@ -135,6 +135,19 @@
                     }
                 }
             }
+
+            // 原生图片懒加载平滑淡入监听（渐进增强）
+            var articleImgs = document.querySelectorAll('.article-content img');
+            for (var m = 0; m < articleImgs.length; m++) {
+                var imgEl = articleImgs[m];
+                if (imgEl.complete) {
+                    imgEl.classList.add('is-loaded');
+                } else {
+                    imgEl.addEventListener('load', function() {
+                        this.classList.add('is-loaded');
+                    });
+                }
+            }
         });
     })();
     </script>

@@ -549,6 +549,17 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
   display: block;
   margin: 0.5rem 0 1.25rem 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: var(--code-bg);
+  transition: opacity 0.35s ease-in-out;
+}
+
+/* 原生懒加载微淡入效果：在保持无JS完全可见的前提下提供优雅的微过渡 */
+.article-content img[loading="lazy"]:not(.is-loaded) {
+  opacity: 0.88;
+}
+
+.article-content img.is-loaded {
+  opacity: 1;
 }
 
 .article-content figure,
