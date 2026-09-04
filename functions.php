@@ -143,6 +143,24 @@ function z_minimal_customize_register( $wp_customize ) {
         )
     );
 
+    // 是否展示 RSS 订阅图标开关
+    $wp_customize->add_setting(
+        'z_minimal_show_rss',
+        array(
+            'default'           => true,
+            'sanitize_callback' => 'z_minimal_sanitize_checkbox',
+        )
+    );
+    $wp_customize->add_control(
+        'z_minimal_show_rss',
+        array(
+            'label'       => __( '展示顶部 RSS 订阅图标', 'z_minimal' ),
+            'description' => __( '在顶部导航栏右侧显示 RSS 订阅图标按钮（默认开启）。', 'z_minimal' ),
+            'section'     => 'z_minimal_options_section',
+            'type'        => 'checkbox',
+        )
+    );
+
     // ICP 备案号
     $wp_customize->add_setting(
         'z_minimal_icp_number',
@@ -260,21 +278,55 @@ function z_minimal_customize_register( $wp_customize ) {
 add_action( 'customize_register', 'z_minimal_customize_register' );
 
 /**
- * 6. 动态生成 SEO 标签 (Description / Canonical)
+ * Checkbox 开关字段清洗器
+ */
+function z_minimal_sanitize_checkbox( $checked ) {
+    return ( ( isset( $checked ) && true == $checked ) ? true : false );
+}
+
+/**
+ * 6. 全面深度 SEO 元标签生成 (Description / Canonical / Open Graph / Twitter Card / Robots)
  */
 function z_minimal_render_seo_meta() {
+    // 404 错误页与内部搜索结果页自动标记 noindex，防止搜索引擎收录死链或空页面
+    if ( is_404() || is_search() ) {
+        echo '<meta name="robots" content="noindex, follow">' . "\n";
+        return;
+    }
+
     $description = '';
+    $title       = wp_get_document_title();
+    $url         = '';
+    $image       = '';
+    $type        = 'website';
+    $pub_time    = '';
+    $mod_time    = '';
 
     if ( is_single() || is_page() ) {
         $post_obj = get_queried_object();
         if ( $post_obj instanceof WP_Post ) {
+            $url = get_permalink( $post_obj->ID );
+            if ( is_single() ) {
+                $type     = 'article';
+                $pub_time = get_the_date( 'c', $post_obj );
+                $mod_time = get_the_modified_date( 'c', $post_obj );
+            }
+
             if ( ! empty( $post_obj->post_excerpt ) ) {
                 $description = wp_strip_all_tags( $post_obj->post_excerpt );
             } else {
-                $description = wp_trim_words( wp_strip_all_tags( $post_obj->post_content ), 40, '...' );
+                $description = wp_trim_words( wp_strip_all_tags( $post_obj->post_content ), 45, '...' );
+            }
+
+            // 智能提取特色图片或正文首图，供社交平台卡片渲染
+            if ( has_post_thumbnail( $post_obj->ID ) ) {
+                $image = get_the_post_thumbnail_url( $post_obj->ID, 'large' );
+            } elseif ( preg_match( '/<img[^>]+src=["\']([^"\']+)["\']/i', $post_obj->post_content, $img_m ) ) {
+                $image = $img_m[1];
             }
         }
     } elseif ( is_home() || is_front_page() ) {
+        $url = home_url( '/' );
         $custom_intro = get_theme_mod( 'z_minimal_intro_text', '' );
         if ( ! empty( $custom_intro ) ) {
             $description = wp_strip_all_tags( $custom_intro );
@@ -283,30 +335,60 @@ function z_minimal_render_seo_meta() {
         }
     } elseif ( is_category() || is_tag() || is_tax() ) {
         $term = get_queried_object();
-        if ( $term && ! empty( $term->description ) ) {
-            $description = wp_strip_all_tags( $term->description );
-        } else {
-            $description = sprintf( __( '%s 下的博客文章列表与按年归档。', 'z_minimal' ), single_term_title( '', false ) );
-        }
-    }
-
-    if ( ! empty( $description ) ) {
-        echo '<meta name="description" content="' . esc_attr( trim( preg_replace( '/\s+/', ' ', $description ) ) ) . '">' . "\n";
-    }
-
-    // 规范链接 (Canonical)
-    if ( is_singular() ) {
-        echo '<link rel="canonical" href="' . esc_url( get_permalink() ) . '">' . "\n";
-    } elseif ( is_home() || is_front_page() ) {
-        echo '<link rel="canonical" href="' . esc_url( home_url( '/' ) ) . '">' . "\n";
-    } elseif ( is_category() || is_tag() || is_tax() ) {
-        $term = get_queried_object();
         if ( $term ) {
             $term_link = get_term_link( $term );
             if ( ! is_wp_error( $term_link ) ) {
-                echo '<link rel="canonical" href="' . esc_url( $term_link ) . '">' . "\n";
+                $url = $term_link;
+            }
+            if ( ! empty( $term->description ) ) {
+                $description = wp_strip_all_tags( $term->description );
+            } else {
+                $description = sprintf( __( '%s 下的博客文章列表与按年归档。', 'z_minimal' ), single_term_title( '', false ) );
             }
         }
+    }
+
+    $clean_desc = trim( preg_replace( '/\s+/', ' ', $description ) );
+
+    // 1. 标准 Description 标签
+    if ( ! empty( $clean_desc ) ) {
+        echo '<meta name="description" content="' . esc_attr( $clean_desc ) . '">' . "\n";
+    }
+
+    // 2. 规范链接 (Canonical URL)
+    if ( ! empty( $url ) ) {
+        echo '<link rel="canonical" href="' . esc_url( $url ) . '">' . "\n";
+    }
+
+    // 3. Open Graph 协议元标签（微信/Telegram/Twitter/Slack 等平台分享时生成富卡片预览）
+    echo '<meta property="og:locale" content="' . esc_attr( get_locale() ) . '">' . "\n";
+    echo '<meta property="og:type" content="' . esc_attr( $type ) . '">' . "\n";
+    echo '<meta property="og:title" content="' . esc_attr( $title ) . '">' . "\n";
+    if ( ! empty( $clean_desc ) ) {
+        echo '<meta property="og:description" content="' . esc_attr( $clean_desc ) . '">' . "\n";
+    }
+    if ( ! empty( $url ) ) {
+        echo '<meta property="og:url" content="' . esc_url( $url ) . '">' . "\n";
+    }
+    echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '">' . "\n";
+
+    if ( ! empty( $image ) ) {
+        echo '<meta property="og:image" content="' . esc_url( $image ) . '">' . "\n";
+    }
+
+    if ( ! empty( $pub_time ) ) {
+        echo '<meta property="article:published_time" content="' . esc_attr( $pub_time ) . '">' . "\n";
+        echo '<meta property="article:modified_time" content="' . esc_attr( $mod_time ) . '">' . "\n";
+    }
+
+    // 4. Twitter Card 标签
+    echo '<meta name="twitter:card" content="' . ( ! empty( $image ) ? 'summary_large_image' : 'summary' ) . '">' . "\n";
+    echo '<meta name="twitter:title" content="' . esc_attr( $title ) . '">' . "\n";
+    if ( ! empty( $clean_desc ) ) {
+        echo '<meta name="twitter:description" content="' . esc_attr( $clean_desc ) . '">' . "\n";
+    }
+    if ( ! empty( $image ) ) {
+        echo '<meta name="twitter:image" content="' . esc_url( $image ) . '">' . "\n";
     }
 }
 add_action( 'wp_head', 'z_minimal_render_seo_meta', 1 );
@@ -500,6 +582,11 @@ function z_minimal_lazy_load_images( $content ) {
             // 自动补全异步解码属性 decoding="async"，避免大图解码阻塞主线程渲染
             if ( stripos( $tag, 'decoding=' ) === false ) {
                 $tag = str_replace( '<img ', '<img decoding="async" ', $tag );
+            }
+
+            // 自动补全缺失的 alt 属性，满足搜索引擎爬虫及无障碍标准检查
+            if ( stripos( $tag, 'alt=' ) === false ) {
+                $tag = str_replace( '<img ', '<img alt="" ', $tag );
             }
 
             return $tag;

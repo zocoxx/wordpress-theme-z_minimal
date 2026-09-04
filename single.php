@@ -18,6 +18,10 @@ get_header();
                 <time class="article-date" datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" itemprop="datePublished">
                     <?php echo esc_html( get_the_date( 'Y/m/d' ) ); ?>
                 </time>
+                <meta itemprop="dateModified" content="<?php echo esc_attr( get_the_modified_date( 'c' ) ); ?>">
+                <span itemprop="author" itemscope itemtype="https://schema.org/Person" style="display:none;">
+                    <meta itemprop="name" content="<?php echo esc_attr( get_the_author() ); ?>">
+                </span>
                 <h1 class="article-title" itemprop="headline"><?php the_title(); ?></h1>
             </header>
 

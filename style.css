@@ -94,6 +94,8 @@ html {
   font-size: 16px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
@@ -105,6 +107,9 @@ body {
   display: flex;
   flex-direction: column;
   transition: background-color var(--transition), color var(--transition);
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 
 a {
@@ -138,6 +143,8 @@ a:hover {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -152,13 +159,17 @@ a:hover {
 
 .site-branding {
   flex-shrink: 0;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .site-title {
   font-size: 1.35rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  margin: 0;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .site-title a {
@@ -198,6 +209,43 @@ a:hover {
   color: var(--accent-color);
 }
 
+/* Navigation Actions Container (RSS & Theme Switcher) */
+.nav-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* RSS Feed Button */
+.rss-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.rss-link-btn:hover {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  background-color: var(--accent-light);
+}
+
+.rss-link-btn svg {
+  display: block;
+}
+
 /* Theme Toggle Button (Single Icon 3-state Cycle) */
 .theme-toggle-single-btn {
   display: inline-flex;
@@ -210,7 +258,7 @@ a:hover {
   border-radius: 6px;
   color: var(--text-secondary);
   cursor: pointer;
-  margin-left: 1.25rem;
+  margin-left: 0;
   padding: 0;
   transition: all var(--transition);
   box-sizing: border-box;
@@ -256,6 +304,9 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
 /* Main Content Area */
 .site-main {
   flex: 1 0 auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* Category & Tag Archive Header */
@@ -323,6 +374,8 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
   padding: 0.45rem 0;
   font-size: 1rem;
   line-height: 1.6;
+  width: 100%;
+  min-width: 0;
 }
 
 .post-date {
@@ -339,6 +392,7 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
 .post-title-link {
   color: var(--text-primary);
   flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -376,7 +430,7 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
 }
 
 .article-header {
-  margin-bottom: 2.25rem;
+  margin-bottom: 2rem;
 }
 
 .article-date {
@@ -393,12 +447,39 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
   line-height: 1.35;
   letter-spacing: -0.02em;
   color: var(--text-primary);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .article-content {
   font-size: 1.05rem;
   line-height: 1.85;
   color: var(--text-primary);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 彻底解决长英文、连续字符与无空格超长URL撑爆移动端版心的问题 */
+.article-content p,
+.article-content li,
+.article-content a,
+.article-content span,
+.article-content blockquote,
+.article-content figcaption,
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 /* 正文超链接：清晰区分普通文本，配以优雅下划线与悬停反馈 */
@@ -488,22 +569,32 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
   border-radius: 4px;
   font-size: 0.88em;
   color: var(--accent-color);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
-.article-content pre {
+.article-content pre,
+.article-content .wp-block-code {
   background-color: var(--code-bg);
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  padding: 1.25rem;
+  padding: 1rem 1.25rem;
   overflow-x: auto;
   margin: 1.5rem 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 
-.article-content pre code {
+.article-content pre code,
+.article-content .wp-block-code code {
   background-color: transparent;
   padding: 0;
   color: var(--text-primary);
   font-size: 0.9rem;
+  white-space: pre;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 /* 表格排版：自适应边框与深浅色模式 */
@@ -514,6 +605,8 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
   font-size: 0.95rem;
   overflow-x: auto;
   display: block;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .article-content th,
@@ -536,10 +629,46 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
   margin: 2.5rem 0;
 }
 
+/* 嵌入块 (Embeds / Iframes / Videos) 彻底限制不超出容器 */
+.article-content figure,
+.article-content .wp-block-image,
+.article-content .wp-block-embed,
+.article-content .wp-block-embed__wrapper,
+.article-content .wp-caption {
+  margin: 0.5rem auto 1.5rem auto;
+  padding: 0;
+  text-align: center;
+  max-width: 100% !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 覆盖 WordPress 默认的 display: table 避免撑开页面 */
+.article-content .wp-block-image.aligncenter,
+.article-content .wp-block-image.alignleft,
+.article-content .wp-block-image.alignright {
+  display: block;
+}
+
+.article-content .wp-block-embed__wrapper {
+  position: relative;
+  max-width: 100% !important;
+  overflow: hidden;
+}
+
 .article-content iframe,
-.article-content video {
-  max-width: 100%;
-  border-radius: 6px;
+.article-content video,
+.article-content embed,
+.article-content object {
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Gutenberg多列区块与画廊容器限制 */
+.article-content .wp-block-columns,
+.article-content .wp-block-gallery {
+  max-width: 100% !important;
+  box-sizing: border-box;
 }
 
 .article-content img {
@@ -560,15 +689,6 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
 
 .article-content img.is-loaded {
   opacity: 1;
-}
-
-.article-content figure,
-.article-content .wp-block-image,
-.article-content .wp-caption {
-  margin: 0.5rem auto 1.5rem auto;
-  padding: 0;
-  text-align: center;
-  max-width: 100%;
 }
 
 .article-content figure img,
@@ -612,11 +732,14 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
   margin-top: 4rem;
   padding-top: 2rem;
   border-top: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .nav-previous,
 .nav-next {
   flex: 1;
+  min-width: 0;
 }
 
 .nav-next {
@@ -637,6 +760,9 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
   font-weight: 500;
   font-size: 0.95rem;
   display: inline-block;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .nav-link-title:visited {
@@ -769,8 +895,12 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
     gap: 0.75rem;
   }
 
-  .theme-toggle-single-btn {
+  .nav-actions {
     margin-left: 0.5rem;
+  }
+
+  .theme-toggle-single-btn {
+    margin-left: 0;
   }
 
   .nav-menu {
@@ -790,6 +920,8 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
 
   .post-title-link {
     white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .article-title {
@@ -798,7 +930,19 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
 
   .article-navigation {
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+
+  .article-content .wp-block-columns {
+    flex-direction: column !important;
+    flex-wrap: wrap !important;
+  }
+
+  .article-content .wp-block-column {
+    flex-basis: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
   .nav-next {
@@ -809,6 +953,7 @@ html[data-theme-mode="dark"] .theme-toggle-single-btn .icon-dark {
 /* 打印与导出 PDF 优化：隐藏多余导航与按钮，黑白高对比排版 */
 @media print {
 
+  .rss-link-btn,
   .theme-toggle-single-btn,
   .site-navigation,
   .article-navigation,

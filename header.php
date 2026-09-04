@@ -55,15 +55,28 @@
             }
             ?>
 
-            <!-- 单一图标三态外观切换按钮 (点击循环切换：跟随系统 -> 浅色模式 -> 深色模式) -->
-            <button type="button" class="theme-toggle-single-btn" id="theme-toggle-single-btn" aria-label="<?php esc_attr_e( '切换外观主题', 'z_minimal' ); ?>" title="<?php esc_attr_e( '当前外观：跟随系统（点击切换）', 'z_minimal' ); ?>">
-                <!-- 跟随系统图标 -->
-                <svg class="theme-icon icon-system" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                <!-- 浅色模式图标 -->
-                <svg class="theme-icon icon-light" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                <!-- 深色模式图标 -->
-                <svg class="theme-icon icon-dark" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-            </button>
+            <div class="nav-actions">
+                <!-- RSS 订阅图标按钮 (通过后台【外观】->【自定义】开关控制显隐) -->
+                <?php if ( get_theme_mod( 'z_minimal_show_rss', true ) ) : ?>
+                    <a href="<?php echo esc_url( get_feed_link() ); ?>" class="rss-link-btn" target="_blank" rel="noopener noreferrer" title="<?php esc_attr_e( 'RSS 订阅', 'z_minimal' ); ?>" aria-label="<?php esc_attr_e( 'RSS 订阅', 'z_minimal' ); ?>">
+                        <svg class="rss-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 11a9 9 0 0 1 9 9"></path>
+                            <path d="M4 4a16 16 0 0 1 16 16"></path>
+                            <circle cx="5" cy="19" r="1"></circle>
+                        </svg>
+                    </a>
+                <?php endif; ?>
+
+                <!-- 单一图标三态外观切换按钮 (点击循环切换：跟随系统 -> 浅色模式 -> 深色模式) -->
+                <button type="button" class="theme-toggle-single-btn" id="theme-toggle-single-btn" aria-label="<?php esc_attr_e( '切换外观主题', 'z_minimal' ); ?>" title="<?php esc_attr_e( '当前外观：跟随系统（点击切换）', 'z_minimal' ); ?>">
+                    <!-- 跟随系统图标 -->
+                    <svg class="theme-icon icon-system" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    <!-- 浅色模式图标 -->
+                    <svg class="theme-icon icon-light" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <!-- 深色模式图标 -->
+                    <svg class="theme-icon icon-dark" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+            </div>
         </nav>
     </header>
 

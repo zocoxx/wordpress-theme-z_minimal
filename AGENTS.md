@@ -10,7 +10,7 @@
 - **中国大陆极速加载（零外部依赖）**：全站 100% 不依赖 Google Fonts、cdnjs、FontAwesome 或任何境外 CDN，全站资源均为纯本地渲染，毫秒级秒开。
 - **现代原生系统字体栈**：采用 macOS/iOS/Windows/Android 原生 UI 字体，配合等宽数字（Tabular Numbers）确保日期排版像素级严谨。
 - **科技简约极淡蓝调 + 自动跟随系统三态深浅色**：原生 CSS 变量驱动，浅色采用纯净科技微白底（`#fafbfc`）+ 冰雾浅蓝（`#0ea5e9` / `#f0f7ff`），深色采用深邃极夜黑蓝（`#080c14`）+ 冰晶透光蓝（`#7dd3fc`），配备单一 Icon 循环切换（💻跟随系统 -> ☀️浅色模式 -> 🌙深色模式），`<head>` 内置 Anti-FOUC 防闪烁逻辑。
-- **全站严格 SEO 语义化**：遵循黄金法则——每个页面仅有唯一 `<h1>` 标签，配合 HTML5 语义结构与 Schema.org 微数据。
+- **全站严苛 SEO 与社交卡片化**：遵循黄金法则——每个页面仅有唯一 `<h1>` 标签，内置完整 Open Graph（OG）与 Twitter Card 社交富媒体卡片元标签，完善 Schema.org 微数据（`BlogPosting`、`datePublished`、`dateModified`、`author`），404/搜索页自动标记 `noindex`，正文图片缺失 `alt` 自动兜底补齐。
 
 ---
 
@@ -75,6 +75,7 @@ wp-content/themes/z_minimal/
 - **图文间距与说明文字**：消除段落与 `<figure>` 的多重外边距堆叠；说明文字（`figcaption`、`.wp-element-caption`）绝对居中，字号弱化为 `0.85rem`，形成清晰层级。
 - **数据表格与多媒体**：自适应移动端横向滚动，边框跟随主题变量；嵌入视频自适应容器。
 - **高性能原生图片懒加载（Native Lazy Loading & Async Decoding）**：服务端在 `the_content` 输出时自动补全 `loading="lazy"` 与 `decoding="async"`，配合 CSS 微占位底色与平滑渐显过渡，零外部 JS 依赖，显著降低首屏资源消耗并避免解码卡顿。
+- **全站移动端防横向溢出（No Horizontal Overflow）**：全局容器与 Flex 骨架注入 `min-width: 0` 和 `overflow-x: hidden`；针对超长非空格 URL、连续代码字符串配置严格的 `overflow-wrap: break-word` 与 `word-break: break-word`；嵌入式 Iframe 与 Gutenberg 区块统一切换为 100% 容器自适应，彻底杜绝移动设备右侧白边与晃动。
 
 ### 3.5 全局彻底关闭评论
 - 过滤器屏蔽 `comments_open`、`pings_open`、`comments_array`。
@@ -97,6 +98,7 @@ wp-content/themes/z_minimal/
 | **工信部备案号** | 【外观】->【自定义】->【博客个性化设置】 | 填入后前台自动直链工信部官网 `beian.miit.gov.cn` |
 | **公安备案号** | 【外观】->【自定义】->【博客个性化设置】 | 可选填入公网安备号 |
 | **自定义版权** | 【外观】->【自定义】->【博客个性化设置】 | 留空则默认动态输出 `© 当前年份 站点名称` |
+| **展示顶部 RSS 图标** | 【外观】->【自定义】->【博客个性化设置】 | 勾选即可在顶部右侧展示 RSS 订阅按钮，支持随时关闭 |
 | **页眉/页脚统计代码** | 【外观】->【自定义】->【博客个性化设置】 | 支持多段统计或验证代码同时粘贴 |
 
 ---
